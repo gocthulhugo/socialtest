@@ -1,0 +1,68 @@
+﻿@using EPiServer.Shell.Web
+@using EPiServer.Web.Mvc.Html
+@using EPiServer.SocialAlloy.Web
+@model PageViewModel<EPiServer.SocialAlloy.Web.Social.Pages.PhotosPage>
+@{ Layout = "~/Views/Shared/Layouts/_Root.cshtml"; }
+<div class="row">
+    <div class="span12">
+        <h1 style="margin-top: 0;" @Html.EditAttributes(x => x.CurrentPage.PageName)>@Model.CurrentPage.PageName</h1>
+        <p class="introduction" @Html.EditAttributes(x => x.CurrentPage.MetaDescription)>@Model.CurrentPage.MetaDescription</p>
+        <div class="row">
+            <div class="span8 clearfix" @Html.EditAttributes(x => x.CurrentPage.MainBody)>
+                @Html.DisplayFor(m => m.CurrentPage.MainBody)
+            </div>
+        </div>
+        <div class="row">
+            <div class="span8">
+                @Html.PropertyFor(x => x.CurrentPage.MainContentArea, new {CssClass = "row", Tag = Global.ContentAreaTags.TwoThirdsWidth})
+
+            </div>
+        </div>
+        <div class="row">
+            @if (Model != null && Model.CurrentPage != null && Model.CurrentPage.ProductPhotos != null && Model.CurrentPage.ProductPhotos.CustomerPhotos.Any()) {
+            foreach (var photo in Model.CurrentPage.ProductPhotos.CustomerPhotos){
+                <div>
+                    <img src="@photo.Uri"/><br/>
+                    @photo.CustomerName<br/>
+                    @photo.Created.ToFriendlyDateString()<br/>
+                    @if (photo.Comments.Any())
+                    {
+                        <ul>
+                        @foreach(var comment in photo.Comments)
+                            {
+                            if (comment.IsSubComment)
+                            {
+                            <li class="nested-comment" data-parent-comment="@comment.PageTarget">@comment.Body</li>
+                            }
+                            else
+                            {
+                            <li class="parent">@comment.Body</li>
+                            }
+                        }
+                        </ul>
+                    }
+                    else
+                    {
+                        // I doubt this is correct, might need another one here
+                        using (Html.BeginForm("Submit", "CommentsBlock", FormMethod.Post))
+                        {
+                            <input name="CustomerId" value="44444" type="hidden"/>
+                            <input name="CurrentPageLink" value="@Model.CurrentPage.PageLink.ID" type="hidden"/>
+                            <input id="Parent" name="ParentComment" type="hidden" value="null"/>
+                            <input name="PhotoId" type="hidden" value="@photo.PhotoId"/>
+                            <input name="ProductId" value="@photo.ProductId"/>
+                            <div>
+                                @Html.TextArea(name: "Body", htmlAttributes: new { placeholder = "Enter comment" })
+                            </div>
+                            <div>
+                                <input type="submit" name="submit" value="Add Comment">
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            }
+        </div>
+        <div class="row">@Html.PropertyFor(x => x.CurrentPage.Feed, new { CssClass = "row", Tag = Global.ContentAreaTags.TwoThirdsWidth })</div>
+    </div>
+</div>

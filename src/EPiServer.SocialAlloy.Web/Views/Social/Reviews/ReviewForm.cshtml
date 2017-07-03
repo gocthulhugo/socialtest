@@ -1,0 +1,9 @@
+﻿@using EPiServer.SocialAlloy.Web.Social.Pages
+@model PageViewModel<ReviewsPage>
+@{
+    Layout = "~/Views/Shared/Layouts/_Root.cshtml";
+}
+<div>
+    <p>Have something to say about the @(Model.CurrentPage.ReviewForm.ProductName)? Write a review to let us know what you think!</p>
+    @Html.Partial("~/Views/Social/Reviews/_FormPartial.cshtml", Model.CurrentPage.ReviewForm)
+</div>

@@ -1,0 +1,21 @@
+﻿@model EPiServer.SocialAlloy.Web.Social.ViewModels.ReviewCommentsViewModel
+@using (Html.BeginForm("Comment", "ProductReviews", FormMethod.Post, new {@class = "form-horizontal"}))
+{
+    @Html.ValidationSummary()
+
+    @Html.HiddenFor(m => m.ProductId)
+    @Html.HiddenFor(m => m.AuthorId)
+    @Html.HiddenFor(m => m.ReviewId)
+
+    <fieldset>
+        <label>
+            Comment:
+            @Html.TextAreaFor(m => m.Text, new { @class = "form-control" })
+        </label>
+        <label>
+            Name:
+            @Html.TextBoxFor(m => m.AuthorName)
+        </label>
+        <button type="submit">Submit</button>
+    </fieldset>
+}

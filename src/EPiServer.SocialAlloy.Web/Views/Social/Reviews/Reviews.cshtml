@@ -1,0 +1,45 @@
+﻿@using EPiServer.SocialAlloy.Web.Social.ViewModels
+@model EPiServer.SocialAlloy.Web.Social.ViewModels.ReviewsViewModel
+@{ Layout = "~/Views/Shared/Layouts/_DemoRoot.cshtml"; }
+<div>
+    <h1>@Model.ProductName</h1>
+    <h3>
+        <span class="label label-primary">@Model.Statistics.OverallRating.ToString("N1")</span>
+        Read the most recent @Model.Statistics.TotalRatings reviews...
+    </h3>
+</div>
+
+@foreach (var review in Model.Reviews) 
+{
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4><span class="label label-default">@review.Rating.ToString("N1")</span> @review.Title</h4>
+        </div>
+        <div>
+            @foreach (var secondary in review.SecondaryRatings)
+            {
+                <p>@secondary.Label:<span class="label label-default">@secondary.RatingValue</span></p>
+            }
+        </div>
+        <div class="panel-body">
+            <strong>By @review.Nickname (@review.Location) on @review.AddedOn.ToString("MMMM dd, yyyy"):</strong>
+            <p>
+                @review.Body
+            </p>
+            @if (review.Comments.Count > 0)
+            {
+                <section class="review-comments">
+                    @foreach (var comment in review.Comments)
+                    {
+                        <p>
+                            @comment.Text
+                            <br />
+                            - @comment.AuthorName on @comment.Created
+                        </p>
+                    }
+                </section>
+            }
+            @Html.Partial("~/Views/Social/Reviews/_CommentFormPartial.cshtml", new ReviewCommentsViewModel {ProductId = Model.ProductId, ReviewId = review.ReviewId})
+        </div>
+    </div>
+}
